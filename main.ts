@@ -1,4 +1,4 @@
-import { Plugin } from 'obsidian';
+import { Plugin, MarkdownRenderer } from 'obsidian';
 
 // Helper function to escape strings for use in a regular expression.
 function escapeRegex(string: string): string {
@@ -59,29 +59,51 @@ export default class InlineTogglePlugin extends Plugin {
 
                 if (isMatch) {
                     // Create toggle icon
-                    const toggleIcon = parent.createEl('span', { cls: 'inline-toggle-icon', text: '▶' });
+                    const toggleIcon = parent.createEl('span', { cls: 'inline-toggle-icon inline-toggle-icon-closed' });
                     parent.insertBefore(toggleIcon, link); // Insert before the link within the same parent
 
                     // Create hidden content container
-                    const hiddenContent = parent.createEl('div', { cls: 'inline-toggle-content', text: 'This is the hardcoded hidden content for the toggle.' });
+                    const hiddenContent = parent.createEl('div', { cls: 'inline-toggle-content'});
                     hiddenContent.style.display = 'none'; // Initially hidden
 
-                    // Insert hidden content after the parent element (e.g., after the <p> or <li>)
-                    if (parent.parentElement) {
-                        parent.parentElement.insertBefore(hiddenContent, parent.nextSibling);
-                    } else {
-                        // Fallback if parent has no parent (unlikely in markdown rendering)
-                        element.appendChild(hiddenContent);
-                    }
+                    // Insert hidden content as a child of the parent element
+                    parent.appendChild(hiddenContent);
 
                     // Add click listener to toggle icon
-                    toggleIcon.addEventListener('click', () => {
-                        if (hiddenContent.style.display === 'none') {
+                    toggleIcon.addEventListener('click', async () => {
+                        const isHidden = hiddenContent.style.display === 'none';
+
+                        if (isHidden) {
+                            // --- Load content on demand ---
+                            if (!hiddenContent.dataset.loaded) {
+                                const href = link.dataset.href;
+                                if (href) {
+                                    const targetFile = this.app.metadataCache.getFirstLinkpathDest(href, context.sourcePath);
+
+                                    if (targetFile) {
+                                        try {
+                                            const fileContent = await this.app.vault.read(targetFile);
+                                            hiddenContent.empty(); // Clear placeholder
+                                            await MarkdownRenderer.render(this.app, fileContent, hiddenContent, context.sourcePath, this);
+                                            hiddenContent.dataset.loaded = 'true'; // Mark as loaded
+                                        } catch (e) {
+                                            hiddenContent.setText(`Error: Could not read file "${href}".`);
+                                            console.error(e);
+                                        }
+                                    } else {
+                                        hiddenContent.setText(`Error: File "${href}" not found.`);
+                                    }
+                                }
+                            }
+                            // --- End load content ---
+
                             hiddenContent.style.display = 'block';
-                            toggleIcon.textContent = '▼';
+                            toggleIcon.removeClass('inline-toggle-icon-closed');
+                            toggleIcon.addClass('inline-toggle-icon-open');
                         } else {
                             hiddenContent.style.display = 'none';
-                            toggleIcon.textContent = '▶';
+                            toggleIcon.removeClass('inline-toggle-icon-open');
+                            toggleIcon.addClass('inline-toggle-icon-closed');
                         }
                     });
                 } else {

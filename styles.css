@@ -1,18 +1,40 @@
 .inline-toggle-icon {
-    cursor: pointer;
-    margin-right: 5px;
-    font-weight: bold;
-    display: inline-block;
-    width: 1em; /* Ensure consistent width */
-    text-align: center;
+	display: inline-block;
+	cursor: pointer;
+	vertical-align: middle;
+	margin-left: 0.6em;
+	margin-right: 0.2em;
+	padding: 0.5em;
+	position: relative;
+	border: none;
+}
+
+.inline-toggle-icon::after {
+	content: '';
+	color: var(--text-muted);
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	display: block;
+	width: 0;
+	height: 0;
+}
+
+.inline-toggle-icon-closed::after {
+	border-top: 0.25em solid transparent;
+	border-bottom: 0.25em solid transparent;
+	border-left: 0.4em solid currentColor;
+}
+
+.inline-toggle-icon-open::after {
+	border-left: 0.25em solid transparent;
+	border-right: 0.25em solid transparent;
+	border-top: 0.4em solid currentColor;
 }
 
 .inline-toggle-content {
-    margin-left: 20px; /* Indent the hidden content */
-    padding: 5px;
-    border-left: 2px solid var(--interactive-accent);
-    background-color: var(--background-secondary);
-    border-radius: 3px;
-    font-size: 0.9em;
-    color: var(--text-muted);
+	margin-left: var(--list-indent);
+	display: block;
+	width: 100%;
 }
