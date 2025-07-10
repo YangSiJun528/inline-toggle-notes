@@ -58,7 +58,32 @@ export default class InlineTogglePlugin extends Plugin {
                 }
 
                 if (isMatch) {
-                    link.style.backgroundColor = 'yellow';
+                    // Create toggle icon
+                    const toggleIcon = parent.createEl('span', { cls: 'inline-toggle-icon', text: '▶' });
+                    parent.insertBefore(toggleIcon, link); // Insert before the link within the same parent
+
+                    // Create hidden content container
+                    const hiddenContent = parent.createEl('div', { cls: 'inline-toggle-content', text: 'This is the hardcoded hidden content for the toggle.' });
+                    hiddenContent.style.display = 'none'; // Initially hidden
+
+                    // Insert hidden content after the parent element (e.g., after the <p> or <li>)
+                    if (parent.parentElement) {
+                        parent.parentElement.insertBefore(hiddenContent, parent.nextSibling);
+                    } else {
+                        // Fallback if parent has no parent (unlikely in markdown rendering)
+                        element.appendChild(hiddenContent);
+                    }
+
+                    // Add click listener to toggle icon
+                    toggleIcon.addEventListener('click', () => {
+                        if (hiddenContent.style.display === 'none') {
+                            hiddenContent.style.display = 'block';
+                            toggleIcon.textContent = '▼';
+                        } else {
+                            hiddenContent.style.display = 'none';
+                            toggleIcon.textContent = '▶';
+                        }
+                    });
                 } else {
                     console.log(`[InlineToggle]     - NO MATCH`);
                 }

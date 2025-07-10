@@ -1,8 +1,18 @@
-/*
+.inline-toggle-icon {
+    cursor: pointer;
+    margin-right: 5px;
+    font-weight: bold;
+    display: inline-block;
+    width: 1em; /* Ensure consistent width */
+    text-align: center;
+}
 
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
-*/
+.inline-toggle-content {
+    margin-left: 20px; /* Indent the hidden content */
+    padding: 5px;
+    border-left: 2px solid var(--interactive-accent);
+    background-color: var(--background-secondary);
+    border-radius: 3px;
+    font-size: 0.9em;
+    color: var(--text-muted);
+}
