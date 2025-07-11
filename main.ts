@@ -1,13 +1,21 @@
-import { Plugin, MarkdownRenderer } from 'obsidian';
+import { App, Plugin, MarkdownRenderer, PluginSettingTab, Setting } from 'obsidian';
 
-// Helper function to escape strings for use in a regular expression.
-function escapeRegex(string: string): string {
-    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+interface InlineToggleSettings {
+    matchOnlyAtStart: boolean;
 }
 
+const DEFAULT_SETTINGS: InlineToggleSettings = {
+    matchOnlyAtStart: true,
+};
+
 export default class InlineTogglePlugin extends Plugin {
+    settings: InlineToggleSettings;
+
     async onload() {
+        await this.loadSettings();
         console.log('[InlineToggle] Plugin loaded. Registering post-processor.');
+
+        this.addSettingTab(new InlineToggleSettingTab(this.app, this));
 
         this.registerMarkdownPostProcessor((element, context) => {
             // --- THIS IS THE MOST IMPORTANT LOG ---
@@ -44,9 +52,17 @@ export default class InlineTogglePlugin extends Plugin {
                 let isMatch = false;
 
                 // Condition for <p>: The paragraph must start with the link.
-                if (parent.tagName === 'P' && parentText.startsWith(linkText)) {
-                    isMatch = true;
-                    console.log(`[InlineToggle]     ✅ MATCH (Paragraph Start)`);
+                if (parent.tagName === 'P') {
+                    if (this.settings.matchOnlyAtStart) {
+                        if (parentText.startsWith(linkText)) {
+                            isMatch = true;
+                            console.log(`[InlineToggle]     ✅ MATCH (Paragraph Start - Setting Enabled)`);
+                        }
+                    } else {
+                        // If not matching only at start, any link in a <p> tag is a match
+                        isMatch = true;
+                        console.log(`[InlineToggle]     ✅ MATCH (Anywhere in Paragraph - Setting Disabled)`);
+                    }
                 }
 
                 if (isMatch) {
@@ -107,5 +123,39 @@ export default class InlineTogglePlugin extends Plugin {
 
     onunload() {
         console.log('[InlineToggle] Plugin unloaded.');
+    }
+
+    async loadSettings() {
+        this.settings = Object.assign({}, DEFAULT_SETTINGS, await this.loadData());
+    }
+
+    async saveSettings() {
+        await this.saveData(this.settings);
+    }
+}
+
+class InlineToggleSettingTab extends PluginSettingTab {
+    plugin: InlineTogglePlugin;
+
+    constructor(app: App, plugin: InlineTogglePlugin) {
+        super(app, plugin);
+    }
+
+    display(): void {
+        const { containerEl } = this;
+
+        containerEl.empty();
+
+        containerEl.createEl('h2', { text: 'Inline Toggle Settings' });
+
+        new Setting(containerEl)
+            .setName('Match only at paragraph start')
+            .setDesc('If enabled, the toggle will only appear for links that are at the very beginning of a paragraph.')
+            .addToggle(toggle => toggle
+                .setValue(this.plugin.settings.matchOnlyAtStart)
+                .onChange(async (value) => {
+                    this.plugin.settings.matchOnlyAtStart = value;
+                    await this.plugin.saveSettings();
+                }));
     }
 }
