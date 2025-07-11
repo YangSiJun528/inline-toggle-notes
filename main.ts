@@ -46,17 +46,18 @@ export default class InlineTogglePlugin extends Plugin {
 
                 if (!linkText) continue;
 
-                console.log(`[InlineToggle]   - Checking link "${linkText}" in <${parent.tagName}>`);
-                console.log(`[InlineToggle]     - Parent Text: "${parentText}"`);
-
                 let isMatch = false;
 
                 // Condition for <p>: The paragraph must start with the link.
                 if (parent.tagName === 'P') {
                     if (this.settings.matchOnlyAtStart) {
-                        if (parentText.startsWith(linkText)) {
+                        // Check if this is the first link in the paragraph
+                        const firstLinkInParent = parent.querySelector('a.internal-link');
+                        if (firstLinkInParent === link && parentText.startsWith(linkText)) {
                             isMatch = true;
-                            console.log(`[InlineToggle]     ✅ MATCH (Paragraph Start - Setting Enabled)`);
+                            console.log(`[InlineToggle]     ✅ MATCH (Paragraph Start - Setting Enabled, First Link)`);
+                        } else {
+                            console.log(`[InlineToggle]     ❌ NO MATCH (Paragraph Start - Setting Enabled, Not First Link or Does Not Start)`);
                         }
                     } else {
                         // If not matching only at start, any link in a <p> tag is a match
