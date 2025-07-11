@@ -1,10 +1,11 @@
 # Inline Toggle Notes
 
-This plugin for Obsidian (https://obsidian.md) allows you to create inline toggle sections within your notes.    
-When a toggle is clicked, it dynamically loads and renders the content of a linked note, providing a clean way to embed and expand information directly within your current view.
+This plugin for [Obsidian](https://obsidian.md) allows you to create inline toggle sections within your notes.    
+When a toggle is clicked, it dynamically loads and renders the content of a linked note, providing a clean way to expand information directly within your current view.
 
 ## Demo
 
+![demo_obsidian-inline-toggle-plugin](https://github.com/user-attachments/assets/387d4103-61b2-4df0-9e26-ab730f16545c)
 
 ## Usage
 
