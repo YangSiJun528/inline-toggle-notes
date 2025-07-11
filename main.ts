@@ -125,8 +125,6 @@ class InlineToggleSettingTab extends PluginSettingTab {
 
         containerEl.empty();
 
-        containerEl.createEl('h2', { text: 'Inline Toggle Settings' });
-
         new Setting(containerEl)
             .setName('Match only at paragraph start')
             .setDesc('If enabled, the toggle will only appear for links that are at the very beginning of a paragraph.')
