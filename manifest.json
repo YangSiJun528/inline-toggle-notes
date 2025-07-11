@@ -1,11 +1,13 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "inline-toggle-notes",
+	"name": "Inline Toggle Notes",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Create toggles that dynamically load content from linked notes.",
+	"author": "Sijun Yang",
+	"authorUrl": "https://github.com/YangSiJun528",
+	"fundingUrl": {
+		"Buy Me a Coffee": "https://buymeacoffee.com/sijun_yang"
+	},
 	"isDesktopOnly": false
 }
