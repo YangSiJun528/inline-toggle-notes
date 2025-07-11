@@ -28,8 +28,8 @@ export default class InlineTogglePlugin extends Plugin {
                 const parent = link.parentElement;
 
                 // In Reading View, the direct parent of a link in a list is the <li> or <p> tag.
-                if (!parent || (parent.tagName !== 'P' && parent.tagName !== 'LI')) {
-                    console.log(`[InlineToggle] -> Skipping link "${link.textContent}" because its parent is <${parent?.tagName}>, not <p> or <li>.`);
+                if (!parent || parent.tagName !== 'P') {
+                    console.log(`[InlineToggle] -> Skipping link "${link.textContent}" because its parent is <${parent?.tagName}>, not <p>.`);
                     continue;
                 }
 
@@ -47,14 +47,6 @@ export default class InlineTogglePlugin extends Plugin {
                 if (parent.tagName === 'P' && parentText.startsWith(linkText)) {
                     isMatch = true;
                     console.log(`[InlineToggle]     ✅ MATCH (Paragraph Start)`);
-                }
-                // Condition for <li>: The list item must start with a list marker, optional space, and then the link.
-                else if (parent.tagName === 'LI') {
-                    const listRegex = new RegExp(`^[-*+]\\s*${escapeRegex(linkText)}`);
-                    if (listRegex.test(parentText)) {
-                        isMatch = true;
-                        console.log(`[InlineToggle]     ✅ MATCH (List Item Start)`);
-                    }
                 }
 
                 if (isMatch) {
