@@ -67,24 +67,23 @@ export default class InlineTogglePlugin extends Plugin {
         const toggleIcon = parent.createEl('span', { cls: 'inline-toggle-icon inline-toggle-icon-closed' });
         parent.insertBefore(toggleIcon, link);
 
-        const hiddenContent = parent.createEl('div', { cls: 'inline-toggle-content'});
-        hiddenContent.style.display = 'none';
+        const hiddenContent = parent.createEl('div', { cls: 'inline-toggle-content inline-toggle-hidden'});
 
         parent.appendChild(hiddenContent);
 
         toggleIcon.addEventListener('click', async () => {
-            const isHidden = hiddenContent.style.display === 'none';
+            const isHidden = hiddenContent.classList.contains('inline-toggle-hidden');
 
             if (isHidden) {
                 if (!hiddenContent.dataset.loaded) {
 					await this.loadContent(link, context, hiddenContent);
 				}
 
-                hiddenContent.style.display = 'block';
+                hiddenContent.removeClass('inline-toggle-hidden');
                 toggleIcon.removeClass('inline-toggle-icon-closed');
                 toggleIcon.addClass('inline-toggle-icon-open');
             } else {
-                hiddenContent.style.display = 'none';
+                hiddenContent.addClass('inline-toggle-hidden');
                 toggleIcon.removeClass('inline-toggle-icon-open');
                 toggleIcon.addClass('inline-toggle-icon-closed');
             }

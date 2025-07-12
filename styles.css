@@ -35,6 +35,9 @@
 
 .inline-toggle-content {
 	margin-left: var(--list-indent);
-	display: block;
 	width: 100%;
+}
+
+.inline-toggle-hidden {
+	display: none;
 }
